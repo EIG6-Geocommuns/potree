@@ -1080,6 +1080,7 @@ export class Utils {
 
 }
 
+/** @type {Object} */
 Utils.screenPass = new function () {
 	this.screenScene = new THREE.Scene();
 	this.screenQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2, 1));

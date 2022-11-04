@@ -2,6 +2,7 @@
 import * as THREE from "three";
 import {Points} from "./Points.js";
 import BinaryHeap from "../libs/other/BinaryHeap.js";
+import Coordinates from "./geographic/Coordinates.js";
 
 export class ProfileData {
 	constructor (profile) {
@@ -199,8 +200,8 @@ export class ProfileRequest {
 
 		let view = new Float32Array(node.geometry.attributes.position.array);
 
-		const end = new itowns.Coordinates('EPSG:4978', segment.end.x, segment.end.y, segment.end.z).as('EPSG:2154').toVector3();
-		const start = new itowns.Coordinates('EPSG:4978', segment.start.x, segment.start.y, segment.start.z).as('EPSG:2154').toVector3();
+		const end = new Coordinates('EPSG:4978', segment.end.x, segment.end.y, segment.end.z).as('EPSG:2154').toVector3();
+		const start = new Coordinates('EPSG:4978', segment.start.x, segment.start.y, segment.start.z).as('EPSG:2154').toVector3();
 		let sv = new THREE.Vector3().subVectors(end, start).setZ(0);
 
 		let segmentDirL93 = sv.clone().normalize();
@@ -217,7 +218,7 @@ export class ProfileRequest {
 			let centerDistance = Math.abs(segment.halfPlane.distanceToPoint(pos));
 
 			if (distance < this.profile.width / 2 && centerDistance < segment.length / 2) {
-				const coord = new itowns.Coordinates('EPSG:4978', pos.x, pos.y, pos.z).as('EPSG:2154').toVector3();
+				const coord = new Coordinates('EPSG:4978', pos.x, pos.y, pos.z).as('EPSG:2154').toVector3();
 				svp.subVectors(coord, start);
 				let localMileage = segmentDirL93.dot(svp);
 

@@ -103,6 +103,7 @@ export class MapView{
 		}
 
 		this.elMap = $('#potree_map');
+        console.log("typeof: " + this.elMap.type);
 		this.elMap.draggable({ handle: $('#potree_map_header') });
 		this.elMap.resizable();
 

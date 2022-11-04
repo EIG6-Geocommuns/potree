@@ -287,6 +287,7 @@ export class Measure extends THREE.Object3D {
 		this.constructor.counter = (this.constructor.counter === undefined) ? 0 : this.constructor.counter + 1;
 
 		this.name = 'Measure_' + this.constructor.counter;
+        /** @type {Array<{position: THREE.Vector3}>} */
 		this.points = [];
 		this._showDistances = true;
 		this._showCoordinates = false;

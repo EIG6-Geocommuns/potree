@@ -9,6 +9,9 @@ const concat = require('gulp-concat');
 const connect = require('gulp-connect');
 const {watch} = gulp;
 
+const ts = require('gulp-typescript')
+const tsProject = ts.createProject('tsconfig.json')
+
 const {createExamplesPage} = require("./src/tools/create_potree_page");
 const {createGithubPage} = require("./src/tools/create_github_page");
 const {createIconsPage} = require("./src/tools/create_icons_page");
@@ -174,6 +177,12 @@ gulp.task('build',
 		}
 	)
 );
+
+gulp.task('type', function() {
+    const js = tsProject.src().pipe(tsProject).js;
+    console.log(js);
+    return js.pipe(gulp.dest('types'));
+});
 
 gulp.task("pack", async function(){
 	exec('rollup -c', function (err, stdout, stderr) {
