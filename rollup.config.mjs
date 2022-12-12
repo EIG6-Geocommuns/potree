@@ -10,7 +10,7 @@ export default [
 			name: 'Potree',
 			sourcemap: true,
 		},
-		plugins: [ resolve() ]
+		plugins: [ resolve() ],
 	},{
 		input: 'src/workers/BinaryDecoderWorker.js',
 		output: {
