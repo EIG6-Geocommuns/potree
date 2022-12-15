@@ -16,12 +16,12 @@
     "tool"
   ],
   "main": "./build/potree/potree.js",
-  "types": "./build/potree/src/Potree.d.ts",
+  "types": "./types/potree.d.ts",
   "scripts": {
     "start": "gulp watch",
     "build": "gulp build pack",
     "postinstall": "npm run build",
-    "tsc": "tsc"
+    "tsc": "rm -fr types/build types/libs types/src && tsc"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^18.6.4",

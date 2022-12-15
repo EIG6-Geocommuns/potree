@@ -36,6 +36,12 @@ import { ClassificationScheme } from "../materials/ClassificationScheme.js";
 import ShaderChunk from "../materials/ShaderChunk.js";
 import { VRButton } from '../../libs/three.js/extra/VRButton.js';
 
+import {GeoPackageLoader} from "../loader/GeoPackageLoader.js";
+import {updatePointClouds} from "../Potree_update_visibility.js";
+import * as LoadProject from "./LoadProject.js"
+import * as SaveProject from "./SaveProject.js"
+import * as Globals from "../Globals.js";
+
 import JSON5 from "json5";
 
 
@@ -91,7 +97,7 @@ export class Viewer extends EventDispatcher{
 
 				// {
 				// 	let imgMenuToggle = document.createElement('img');
-				// 	imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+				// 	imgMenuToggle.src = new URL(Globals.resourcePath + '/icons/menu_button.svg').href;
 				// 	imgMenuToggle.onclick = this.toggleSidebar;
 				// 	// imgMenuToggle.classList.add('potree_menu_toggle');
 
@@ -100,7 +106,7 @@ export class Viewer extends EventDispatcher{
 
 				// {
 				// 	let imgMenuToggle = document.createElement('img');
-				// 	imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+				// 	imgMenuToggle.src = new URL(Globals.resourcePath + '/icons/menu_button.svg').href;
 				// 	imgMenuToggle.onclick = this.toggleSidebar;
 				// 	// imgMenuToggle.classList.add('potree_menu_toggle');
 
@@ -109,7 +115,7 @@ export class Viewer extends EventDispatcher{
 
 				// {
 				// 	let imgMenuToggle = document.createElement('img');
-				// 	imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+				// 	imgMenuToggle.src = new URL(Globals.resourcePath + '/icons/menu_button.svg').href;
 				// 	imgMenuToggle.onclick = this.toggleSidebar;
 				// 	// imgMenuToggle.classList.add('potree_menu_toggle');
 
@@ -239,7 +245,7 @@ export class Viewer extends EventDispatcher{
 		{ // create VR scene
 			this.sceneVR = new THREE.Scene();
 
-			// let texture = new THREE.TextureLoader().load(`${Potree.resourcePath}/images/vr_controller_help.jpg`);
+			// let texture = new THREE.TextureLoader().load(`${Globals.resourcePath}/images/vr_controller_help.jpg`);
 
 			// let plane = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 			// let infoMaterial = new THREE.MeshBasicMaterial({map: texture});
@@ -478,7 +484,7 @@ export class Viewer extends EventDispatcher{
 		}
 
 		if(bg === "skybox"){
-			this.skybox = Utils.loadSkybox(new URL(Potree.resourcePath + '/textures/skybox2/').href);
+			this.skybox = Utils.loadSkybox(new URL(Globals.resourcePath + '/textures/skybox2/').href);
 		}
 
 		this.background = bg;
@@ -579,14 +585,14 @@ export class Viewer extends EventDispatcher{
 	}
 
 	setPointBudget (value) {
-		if (Potree.pointBudget !== value) {
-			Potree.pointBudget = parseInt(value);
+		if (Globals.pointBudget !== value) {
+			Globals.pointBudget = parseInt(value);
 			this.dispatchEvent({'type': 'point_budget_changed', 'viewer': this});
 		}
 	};
 
 	getPointBudget () {
-		return Potree.pointBudget;
+		return Globals.pointBudget;
 	};
 
 	setShowAnnotations (value) {
@@ -858,7 +864,7 @@ export class Viewer extends EventDispatcher{
 	};
 
 	moveToGpsTimeVicinity(time){
-		const result = Potree.Utils.findClosestGpsTime(time, viewer);
+		const result = Utils.findClosestGpsTime(time, viewer);
 
 		const box  = result.node.pointcloud.deepestNodeAt(result.position).getBoundingBox();
 		const diameter = box.min.distanceTo(box.max);
@@ -1012,14 +1018,14 @@ export class Viewer extends EventDispatcher{
 		// const json = JSON.parse(text);
 
 		if(json.type === "Potree"){
-			Potree.loadProject(viewer, json);
+			LoadProject.loadProject(viewer, json);
 		}
 
-		//Potree.loadProject(this, url);
+		//LoadProject.loadProject(this, url);
 	}
 
 	saveProject(){
-		return Potree.saveProject(this);
+		return SaveProject.saveProject(this);
 	}
 	
 	loadSettingsFromURL(){
@@ -1216,17 +1222,17 @@ export class Viewer extends EventDispatcher{
 
 		let viewer = this;
 		let sidebarContainer = $('#potree_sidebar_container');
-		sidebarContainer.load(new URL(Potree.scriptPath + '/sidebar.html').href, () => {
+		sidebarContainer.load(new URL(Globals.scriptPath + '/sidebar.html').href, () => {
 			sidebarContainer.css('width', '300px');
 			sidebarContainer.css('height', '100%');
 
 			let imgMenuToggle = document.createElement('img');
-			imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+			imgMenuToggle.src = new URL(Globals.resourcePath + '/icons/menu_button.svg').href;
 			imgMenuToggle.onclick = this.toggleSidebar;
 			imgMenuToggle.classList.add('potree_menu_toggle');
 
 			let imgMapToggle = document.createElement('img');
-			imgMapToggle.src = new URL(Potree.resourcePath + '/icons/map_icon.png').href;
+			imgMapToggle.src = new URL(Globals.resourcePath + '/icons/map_icon.png').href;
 			imgMapToggle.style.display = 'none';
 			imgMapToggle.onclick = e => { this.toggleMap(); };
 			imgMapToggle.id = 'potree_map_toggle';
@@ -1278,7 +1284,7 @@ export class Viewer extends EventDispatcher{
 
 			i18n.init({
 				lng: 'en',
-				resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
+				resGetPath: Globals.resourcePath + '/lang/__lng__/__ns__.json',
 				preload: ['en', 'fr', 'de', 'jp', 'se', 'es', 'zh'],
 				getAsync: true,
 				debug: false
@@ -1299,7 +1305,7 @@ export class Viewer extends EventDispatcher{
 				//	$(callback);
 				//}
 
-				let elProfile = $('<div>').load(new URL(Potree.scriptPath + '/profile.html').href, () => {
+				let elProfile = $('<div>').load(new URL(Globals.scriptPath + '/profile.html').href, () => {
 					$(document.body).append(elProfile.children());
 					this.profileWindow = new ProfileWindow(this);
 					this.profileWindowController = new ProfileWindowController(this);
@@ -1370,7 +1376,7 @@ export class Viewer extends EventDispatcher{
 						const json = JSON.parse(text);
 
 						if(json.type === "Potree"){
-							Potree.loadProject(viewer, json);
+							LoadProject.loadProject(viewer, json);
 						}
 					}catch(e){
 						console.error("failed to parse the dropped file as JSON");
@@ -1396,7 +1402,7 @@ export class Viewer extends EventDispatcher{
 							source: file.name,
 						};
 						
-						const geo = await Potree.GeoPackageLoader.loadBuffer(buffer, params);
+						const geo = await GeoPackageLoader.loadBuffer(buffer, params);
 						viewer.scene.addGeopackage(geo);
 					}
 				}
@@ -1603,7 +1609,7 @@ export class Viewer extends EventDispatcher{
 
 	update(delta, timestamp){
 
-		if(Potree.measureTimings) performance.mark("update-start");
+		if(Globals.measureTimings) performance.mark("update-start");
 
 		this.dispatchEvent({
 			type: 'update_start',
@@ -1615,7 +1621,7 @@ export class Viewer extends EventDispatcher{
 		const camera = scene.getActiveCamera();
 		const visiblePointClouds = this.scene.pointclouds.filter(pc => pc.visible)
 		
-		Potree.pointLoadLimit = Potree.pointBudget * 2;
+		Globals.pointLoadLimit = Globals.pointBudget * 2;
 
 		const lTarget = camera.position.clone().add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(1000));
 		this.scene.directionalLight.position.copy(camera.position);
@@ -1664,7 +1670,7 @@ export class Viewer extends EventDispatcher{
 		}
 
 		if (!this.freeze) {
-			let result = Potree.updatePointClouds(scene.pointclouds, camera, this.renderer);
+			let result = updatePointClouds(scene.pointclouds, camera, this.renderer);
 
 
 			// DEBUG - ONLY DISPLAY NODES THAT INTERSECT MOUSE
@@ -1719,8 +1725,8 @@ export class Viewer extends EventDispatcher{
 			// });
 			// const duration = (performance.now() - tStart).toFixed(2);
 
-			// Potree.debug.computeNearDuration = duration;
-			// Potree.debug.numNodes = numNodes;
+			// Globals.debug.computeNearDuration = duration;
+			// Globals.debug.numNodes = numNodes;
 
 			//console.log(lowestDistance.toString(2), duration);
 
@@ -1877,7 +1883,7 @@ export class Viewer extends EventDispatcher{
 			delta: delta,
 			timestamp: timestamp});
 			
-		if(Potree.measureTimings) {
+		if(Globals.measureTimings) {
 			performance.mark("update-end");
 			performance.measure("update", "update-start", "update-end");
 		}
@@ -2019,7 +2025,7 @@ export class Viewer extends EventDispatcher{
 			// automatically switch to paraboloids because they cause far less flickering in VR, 
 			// when point sizes are larger than around 2 pixels
 			// if(Features.SHADER_INTERPOLATION.isSupported()){
-			// 	pointcloud.material.shape = Potree.PointShape.PARABOLOID;
+			// 	pointcloud.material.shape = Globals.PointShape.PARABOLOID;
 			// }
 		}
 		
@@ -2103,7 +2109,7 @@ export class Viewer extends EventDispatcher{
 	}
 	
 	render(){
-		if(Potree.measureTimings) performance.mark("render-start");
+		if(Globals.measureTimings) performance.mark("render-start");
 
 		try{
 
@@ -2119,14 +2125,14 @@ export class Viewer extends EventDispatcher{
 			this.onCrash(e);
 		}
 		
-		if(Potree.measureTimings){
+		if(Globals.measureTimings){
 			performance.mark("render-end");
 			performance.measure("render", "render-start", "render-end");
 		}
 	}
 
 	resolveTimings(timestamp){
-		if(Potree.measureTimings){
+		if(Globals.measureTimings){
 			if(!this.toggle){
 				this.toggle = timestamp;
 			}
@@ -2160,6 +2166,7 @@ export class Viewer extends EventDispatcher{
 					group.max = Math.max(group.max, measure.duration);
 				}
 
+                // [QB]: `resolveQueries` does not exist on Potree 1.8
 				let glQueries = Potree.resolveQueries(this.renderer.getContext());
 				for(let [key, value] of glQueries){
 
@@ -2231,7 +2238,7 @@ export class Viewer extends EventDispatcher{
 			this.stats.begin();
 		}
 
-		if(Potree.measureTimings){
+		if(Globals.measureTimings){
 			performance.mark("loop-start");
 		}
 
@@ -2249,14 +2256,14 @@ export class Viewer extends EventDispatcher{
 		// }
 
 
-		if(Potree.measureTimings){
+		if(Globals.measureTimings){
 			performance.mark("loop-end");
 			performance.measure("loop", "loop-start", "loop-end");
 		}
 		
 		this.resolveTimings(timestamp);
 
-		Potree.framenumber++;
+		Globals.framenumber++;
 
 		if(this.stats){
 			this.stats.end();

@@ -5,6 +5,7 @@ import TWEEN from '@tweenjs/tween.js';
 import {Action} from "./Actions.js";
 import {Utils} from "./utils.js";
 import {EventDispatcher} from "./EventDispatcher.js";
+import * as Globals from "./Globals.js";
 
 export class Annotation extends EventDispatcher {
 	constructor (args = {}) {
@@ -45,7 +46,7 @@ export class Annotation extends EventDispatcher {
 		this.parent = null;
 		this.boundingBox = new THREE.Box3();
 
-		let iconClose = exports.resourcePath + '/icons/close.svg';
+		let iconClose = Globals.resourcePath + '/icons/close.svg';
 
 		this.domElement = $(`
 			<div class="annotation" oncontextmenu="return false;">

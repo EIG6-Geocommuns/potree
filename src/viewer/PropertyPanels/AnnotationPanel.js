@@ -1,6 +1,8 @@
 
 import {Utils} from "../../utils.js";
 
+import * as Globals from "../../Globals.js";
+
 export class AnnotationPanel{
 	constructor(viewer, propertiesPanel, annotation){
 		this.viewer = viewer;
@@ -9,7 +11,7 @@ export class AnnotationPanel{
 
 		this._update = () => { this.update(); };
 
-		let copyIconPath = `${Potree.resourcePath}/icons/copy.svg`;
+		let copyIconPath = `${Globals.resourcePath}/icons/copy.svg`;
 		this.elContent = $(`
 		<div class="propertypanel_content">
 			<table>

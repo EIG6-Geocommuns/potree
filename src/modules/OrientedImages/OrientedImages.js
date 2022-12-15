@@ -2,6 +2,8 @@
 import * as THREE from "three";
 import {OrientedImageControls} from "./OrientedImageControls.js";
 import { EventDispatcher } from "../../EventDispatcher.js";
+import {PolygonClipVolume} from "../../utils/PolygonClipVolume.js";
+import * as Globals from "../../Globals.js";
 
 // https://support.pix4d.com/hc/en-us/articles/205675256-How-are-yaw-pitch-roll-defined
 // https://support.pix4d.com/hc/en-us/articles/202558969-How-are-omega-phi-kappa-defined
@@ -379,7 +381,7 @@ export class OrientedImageLoader{
 						newCamDir.clone().multiplyScalar(viewer.getMoveSpeed()));
 					camera.position.copy(newCamPos);
 				}
-				let volume = new Potree.PolygonClipVolume(camera);
+				let volume = new PolygonClipVolume(camera);
 				let m0 = new THREE.Mesh();
 				let m1 = new THREE.Mesh();
 				let m2 = new THREE.Mesh();
@@ -413,7 +415,7 @@ export class OrientedImageLoader{
 
 				const target = image;
 
-				const tmpImagePath = `${Potree.resourcePath}/images/loading.jpg`;
+				const tmpImagePath = `${Globals.resourcePath}/images/loading.jpg`;
 				new THREE.TextureLoader().load(tmpImagePath,
 					(texture) => {
 						if(target.texture === null){
@@ -486,7 +488,7 @@ export class OrientedImageLoader{
 		images.imageParams = imageParams;
 		images.images = orientedImages;
 
-		Potree.debug.moveToImage = moveToImage;
+		Globals.debug.moveToImage = moveToImage;
 
 		return images;
 	}

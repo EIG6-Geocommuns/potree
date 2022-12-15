@@ -3,6 +3,7 @@ import * as THREE from "three";
 import {ClipTask, ClipMethod} from "./defines.js";
 import {Box3Helper} from "./utils/Box3Helper.js";
 import BinaryHeap from "../libs/other/BinaryHeap.js";
+import * as Globals from "./Globals";
 
 export function updatePointClouds(pointclouds, camera, renderer){
 
@@ -28,7 +29,7 @@ export function updatePointClouds(pointclouds, camera, renderer){
 		pointcloud.updateVisibleBounds();
 	}
 
-	exports.lru.freeMemory();
+	Globals.lru.freeMemory();
 
 	return result;
 };
@@ -127,10 +128,10 @@ export function updateVisibility(pointclouds, camera, renderer){
 
 	// check if pointcloud has been transformed
 	// some code will only be executed if changes have been detected
-	if(!Potree._pointcloudTransformVersion){
-		Potree._pointcloudTransformVersion = new Map();
+	if(!Globals._pointcloudTransformVersion){
+		Globals._pointcloudTransformVersion = new Map();
 	}
-	let pointcloudTransformVersion = Potree._pointcloudTransformVersion;
+	let pointcloudTransformVersion = Globals._pointcloudTransformVersion;
 	for(let pointcloud of pointclouds){
 
 		if(!pointcloud.visible){
@@ -177,7 +178,7 @@ export function updateVisibility(pointclouds, camera, renderer){
 		let maxLevel = pointcloud.maxLevel || Infinity;
 		let level = node.getLevel();
 		let visible = insideFrustum;
-		visible = visible && !(numVisiblePoints + node.getNumPoints() > Potree.pointBudget);
+		visible = visible && !(numVisiblePoints + node.getNumPoints() > Globals.pointBudget);
 		visible = visible && !(numVisiblePointsInPointclouds.get(pointcloud) + node.getNumPoints() > pointcloud.pointBudget);
 		visible = visible && level < maxLevel;
 		visible = visible || node.getLevel() <= 2;
@@ -222,16 +223,16 @@ export function updateVisibility(pointclouds, camera, renderer){
 
 				//if(window.debugdraw !== undefined && window.debugdraw === true && node.name === "r60"){
 
-				//	Potree.utils.debugPlane(viewer.scene.scene, pxPlane, 1, 0xFF0000);
-				//	Potree.utils.debugPlane(viewer.scene.scene, nxPlane, 1, 0x990000);
-				//	Potree.utils.debugPlane(viewer.scene.scene, pyPlane, 1, 0x00FF00);
-				//	Potree.utils.debugPlane(viewer.scene.scene, nyPlane, 1, 0x009900);
-				//	Potree.utils.debugPlane(viewer.scene.scene, pzPlane, 1, 0x0000FF);
-				//	Potree.utils.debugPlane(viewer.scene.scene, nzPlane, 1, 0x000099);
+				//	Utils.debugPlane(viewer.scene.scene, pxPlane, 1, 0xFF0000);
+				//	Utils.debugPlane(viewer.scene.scene, nxPlane, 1, 0x990000);
+				//	Utils.debugPlane(viewer.scene.scene, pyPlane, 1, 0x00FF00);
+				//	Utils.debugPlane(viewer.scene.scene, nyPlane, 1, 0x009900);
+				//	Utils.debugPlane(viewer.scene.scene, pzPlane, 1, 0x0000FF);
+				//	Utils.debugPlane(viewer.scene.scene, nzPlane, 1, 0x000099);
 
-				//	Potree.utils.debugBox(viewer.scene.scene, box, new THREE.Matrix4(), 0x00FF00);
-				//	Potree.utils.debugBox(viewer.scene.scene, box, pointcloud.matrixWorld, 0xFF0000);
-				//	Potree.utils.debugBox(viewer.scene.scene, clipBox.box.boundingBox, clipBox.box.matrixWorld, 0xFF0000);
+				//	Utils.debugBox(viewer.scene.scene, box, new THREE.Matrix4(), 0x00FF00);
+				//	Utils.debugBox(viewer.scene.scene, box, pointcloud.matrixWorld, 0xFF0000);
+				//	Utils.debugBox(viewer.scene.scene, clipBox.box.boundingBox, clipBox.box.matrixWorld, 0xFF0000);
 
 				//	window.debugdraw = false;
 				//}
@@ -280,7 +281,7 @@ export function updateVisibility(pointclouds, camera, renderer){
 			lowestSpacing = Math.min(lowestSpacing, node.geometryNode.spacing);
 		}
 
-		if (numVisiblePoints + node.getNumPoints() > Potree.pointBudget) {
+		if (numVisiblePoints + node.getNumPoints() > Globals.pointBudget) {
 			break;
 		}
 
@@ -308,7 +309,7 @@ export function updateVisibility(pointclouds, camera, renderer){
 		}
 
 		if (node.isTreeNode()) {
-			exports.lru.touch(node.geometryNode);
+			Globals.lru.touch(node.geometryNode);
 			node.sceneNode.visible = true;
 			node.sceneNode.material = pointcloud.material;
 
@@ -338,8 +339,8 @@ export function updateVisibility(pointclouds, camera, renderer){
 				node.boundingBoxNode.visible = false;
 			}
 
-			// if(node.boundingBoxNode !== undefined && exports.debug.allowedNodes !== undefined){
-			// 	if(!exports.debug.allowedNodes.includes(node.name)){
+			// if(node.boundingBoxNode !== undefined && Globals.debug.allowedNodes !== undefined){
+			// 	if(!Globals.debug.allowedNodes.includes(node.name)){
 			// 		node.boundingBoxNode.visible = false;
 			// 	}
 			// }
@@ -396,15 +397,16 @@ export function updateVisibility(pointclouds, camera, renderer){
 
 	{ // update DEM
 		let maxDEMLevel = 4;
+        // [QB] Missing DEM type in Potree 1.8
 		let candidates = pointclouds
-			.filter(p => (p.generateDEM && p.dem instanceof Potree.DEM));
+			.filter(p => (p.generateDEM && p.dem instanceof DEM));
 		for (let pointcloud of candidates) {
 			let updatingNodes = pointcloud.visibleNodes.filter(n => n.getLevel() <= maxDEMLevel);
 			pointcloud.dem.update(updatingNodes);
 		}
 	}
 
-	for (let i = 0; i < Math.min(Potree.maxNodesLoading, unloadedGeometry.length); i++) {
+	for (let i = 0; i < Math.min(Globals.maxNodesLoading, unloadedGeometry.length); i++) {
 		unloadedGeometry[i].load();
 	}
 

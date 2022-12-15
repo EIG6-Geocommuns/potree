@@ -1,3 +1,4 @@
+import * as Globals from "./Globals.js";
 
 
 class LRUItem{
@@ -140,7 +141,7 @@ class LRU{
 			return;
 		}
 
-		while (this.numPoints > Potree.pointLoadLimit) {
+		while (this.numPoints > Globals.pointLoadLimit) {
 			let element = this.first;
 			let node = element.node;
 			this.disposeDescendants(node);

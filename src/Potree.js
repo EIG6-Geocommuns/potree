@@ -76,63 +76,32 @@ export {EarthControls} from "./navigation/EarthControls.js";
 export {DeviceOrientationControls} from "./navigation/DeviceOrientationControls.js";
 export {VRControls} from "./navigation/VRControls.js";
 
+export {BlurMaterial} from "./materials/BlurMaterial.js";
+export {
+	PointCloudArena4DGeometryNode,
+	PointCloudArena4DGeometry
+} from "./arena4d/PointCloudArena4DGeometry.js";
+export * from "./Globals.js";
+
 import "./extensions/OrthographicCamera.js";
 import "./extensions/PerspectiveCamera.js";
 import "./extensions/Ray.js";
 
-import {LRU} from "./LRU.js";
 import {OctreeLoader} from "./modules/loader/2.0/OctreeLoader.js";
 import {POCLoader} from "./loader/POCLoader.js";
 import {EptLoader} from "./loader/EptLoader.js";
+import {PointCloudArena4D} from "./arena4d/PointCloudArena4D.js";
+import {PointCloudArena4DGeometry} from "./arena4d/PointCloudArena4DGeometry.js";
 import {PointCloudOctree} from "./PointCloudOctree.js";
-import {WorkerPool} from "./WorkerPool.js";
 import {ShaderChunk} from 'three';
+import * as Globals from "./Globals.js";
+
 
 export const setTHREEShaderChunk = (c) => {
 	Object.assign(ShaderChunk, c);
 }
 
-export const workerPool = new WorkerPool();
-
-export const version = {
-	major: 1,
-	minor: 8,
-	suffix: '.0'
-};
-
-export let lru = new LRU();
-
-console.log('Potree ' + version.major + '.' + version.minor + version.suffix);
-
-export let pointBudget = 1 * 1000 * 1000;
-export let framenumber = 0;
-export let numNodesLoading = 0;
-export let maxNodesLoading = 4;
-
-export const debug = {};
-
-let scriptPath = "";
-
-if (document.currentScript && document.currentScript.src) {
-	scriptPath = new URL(document.currentScript.src + '/..').href;
-	if (scriptPath.slice(-1) === '/') {
-		scriptPath = scriptPath.slice(0, -1);
-	}
-} else if(import.meta){
-	scriptPath = new URL(import.meta.url + "/..").href;
-	if (scriptPath.slice(-1) === '/') {
-		scriptPath = scriptPath.slice(0, -1);
-	}
-}else {
-	console.error('Potree was unable to find its script path using document.currentScript. Is Potree included with a script tag? Does your browser support this function?');
-}
-
-let resourcePath = scriptPath + '/resources';
-
-// scriptPath: build/potree
-// resourcePath:build/potree/resources
-export {scriptPath, resourcePath};
-
+console.log('Potree ' + Globals.version.major + '.' + Globals.version.minor + Globals.version.suffix);
 
 export function loadPointCloud(path, name, callback){
 	let loaded = function(e){
@@ -168,7 +137,7 @@ export function loadPointCloud(path, name, callback){
 				}
 			});
 		} else if (path.indexOf('metadata.json') > 0) {
-			Potree.OctreeLoader.load(path).then(e => {
+			OctreeLoader.load(path).then(e => {
 				let geometry = e.geometry;
 
 				if(!geometry){

@@ -1,6 +1,8 @@
 
 import {Utils} from "../../utils.js";
 
+import * as Globals from "../../Globals.js";
+
 export class CameraPanel{
 	constructor(viewer, propertiesPanel){
 		this.viewer = viewer;
@@ -8,7 +10,7 @@ export class CameraPanel{
 
 		this._update = () => { this.update(); };
 
-		let copyIconPath = Potree.resourcePath + '/icons/copy.svg';
+		let copyIconPath = Globals.resourcePath + '/icons/copy.svg';
 		this.elContent = $(`
 		<div class="propertypanel_content">
 			<table>

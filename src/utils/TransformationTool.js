@@ -2,6 +2,7 @@
 import * as THREE from "three";
 import TWEEN from '@tweenjs/tween.js';
 import {Utils} from "../utils.js";
+import * as Globals from "../Globals.js";
 
 export class TransformationTool {
 	constructor(viewer) {

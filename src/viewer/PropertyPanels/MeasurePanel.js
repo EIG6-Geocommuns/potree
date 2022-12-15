@@ -1,6 +1,7 @@
 
 
 import {Utils} from "../../utils.js";
+import * as Globals from "../../Globals.js";
 
 export class MeasurePanel{
 
@@ -24,7 +25,7 @@ export class MeasurePanel{
 			</table>
 		`);
 
-		let copyIconPath = Potree.resourcePath + '/icons/copy.svg';
+		let copyIconPath = Globals.resourcePath + '/icons/copy.svg';
 
 		for (let point of points) {
 			let x = Utils.addCommas(point.x.toFixed(3));

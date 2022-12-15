@@ -3,6 +3,7 @@ import * as THREE from "three";
 import {Points} from "./Points.js";
 import BinaryHeap from "../libs/other/BinaryHeap.js";
 import Coordinates from "./geographic/Coordinates.js";
+import * as Globals from "./Globals.js";
 
 export class ProfileData {
 	constructor (profile) {
@@ -134,7 +135,7 @@ export class ProfileRequest {
 			if (node.loaded) {
 				// add points to result
 				intersectedNodes.push(node);
-				exports.lru.touch(node);
+				Globals.lru.touch(node);
 				this.highestLevelServed = Math.max(node.getLevel(), this.highestLevelServed);
 
 				var geom = node.pcoGeometry;
@@ -299,7 +300,7 @@ export class ProfileRequest {
 
 				//{// DEBUG
 				//	console.log(node.name);
-				//	let boxHelper = new Potree.Box3Helper(node.getBoundingBox());
+				//	let boxHelper = new Box3Helper(node.getBoundingBox());
 				//	boxHelper.matrixAutoUpdate = false;
 				//	boxHelper.matrix.copy(viewer.scene.pointclouds[0].matrixWorld);
 				//	viewer.scene.scene.add(boxHelper);

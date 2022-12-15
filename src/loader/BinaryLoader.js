@@ -3,7 +3,7 @@
 import * as THREE from "three";
 import {Version} from "../Version.js";
 import {XHRFactory} from "../XHRFactory.js";
-
+import * as Globals from "../Globals.js";
 
 export class BinaryLoader{
 
@@ -60,8 +60,8 @@ export class BinaryLoader{
 			node.numPoints = numPoints;
 		}
 
-		let workerPath = Potree.scriptPath + '/workers/BinaryDecoderWorker.js';
-		let worker = Potree.workerPool.getWorker(workerPath);
+		let workerPath = Globals.scriptPath + '/workers/BinaryDecoderWorker.js';
+		let worker = Globals.workerPool.getWorker(workerPath);
 
 		worker.onmessage = function (e) {
 
@@ -72,7 +72,7 @@ export class BinaryLoader{
 				new THREE.Vector3().fromArray(data.tightBoundingBox.max)
 			);
 
-			Potree.workerPool.returnWorker(workerPath, worker);
+			Globals.workerPool.returnWorker(workerPath, worker);
 
 			let geometry = new THREE.BufferGeometry();
 
@@ -132,7 +132,7 @@ export class BinaryLoader{
 			node.loaded = true;
 			node.loading = false;
 			node.estimatedSpacing = data.estimatedSpacing;
-			Potree.numNodesLoading--;
+			Globals.numNodesLoading--;
 		};
 
 		let message = {
