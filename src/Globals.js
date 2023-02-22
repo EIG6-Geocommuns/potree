@@ -9,7 +9,7 @@ export const version = {
 	suffix: '.0'
 };
 
-export let lru = new LRU();
+export let lru = null; //new LRU();
 
 export let measureTimings = false;
 export let _pointcloudTransformVersion = undefined;

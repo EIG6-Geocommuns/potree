@@ -1,0 +1,72 @@
+<head>
+</head>
+<body>
+  <script src="../node_modules/three/build/three.js"></script>
+  <script src="../node_modules/three/examples/js/controls/OrbitControls.js">
+  </script>
+  <script src="../build/potree/potree.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
+
+    const canvas = document.createElement('canvas');
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0px';
+    canvas.style.left = '0px';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    document.body.appendChild(canvas);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      alpha: true,
+      logarithmicDepthBuffer: false,
+      precision: 'highp',
+      premultipliedAlpha: true,
+      antialias: true,
+      preserveDrawingBuffer: false,
+      powerPreference: 'high-performance'
+    });
+
+    const geometry = new THREE.BoxGeometry(25, 1, 25);
+    const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.y = -2;
+    scene.add(cube);
+
+    scene.add(new THREE.AmbientLight(0xffffff));
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    camera.position.z = 10;
+
+    const pointClouds = [];
+
+    const baseUrl = "data";
+    Potree.loadPointCloud("localhost:1234/example/data/hierarchy.bin", url => `${baseUrl}${url}`,).then(function(pco) {
+      scene.add(pco);
+      pointClouds.push(pco);
+    });
+
+    function loop()
+    {
+      //Potree.updatePointClouds(pointClouds, camera, renderer);
+
+      controls.update();
+      renderer.render(scene, camera);
+
+      requestAnimationFrame(loop);
+    };
+    loop();
+
+    document.body.onresize = function()
+    {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+    document.body.onresize();
+  </script>
+<body>

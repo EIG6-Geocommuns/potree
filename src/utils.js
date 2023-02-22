@@ -3,10 +3,6 @@ import * as THREE from "three";
 import proj4 from 'proj4';
 import TWEEN from '@tweenjs/tween.js';
 import {XHRFactory} from "./XHRFactory.js";
-import {Volume} from "./utils/Volume.js";
-import {Profile} from "./utils/Profile.js";
-import {Measure} from "./utils/Measure.js";
-import {PolygonClipVolume} from "./utils/PolygonClipVolume.js";
 
 import * as Globals from "./Globals.js";
 
@@ -830,30 +826,6 @@ export class Utils {
 
 		document.body.removeChild(textArea);
 
-	}
-
-	static getMeasurementIcon(measurement){
-		if (measurement instanceof Measure) {
-			if (measurement.showDistances && !measurement.showArea && !measurement.showAngles) {
-				return `${Globals.resourcePath}/icons/distance.svg`;
-			} else if (measurement.showDistances && measurement.showArea && !measurement.showAngles) {
-				return `${Globals.resourcePath}/icons/area.svg`;
-			} else if (measurement.maxMarkers === 1) {
-				return `${Globals.resourcePath}/icons/point.svg`;
-			} else if (!measurement.showDistances && !measurement.showArea && measurement.showAngles) {
-				return `${Globals.resourcePath}/icons/angle.png`;
-			} else if (measurement.showHeight) {
-				return `${Globals.resourcePath}/icons/height.svg`;
-			} else {
-				return `${Globals.resourcePath}/icons/distance.svg`;
-			}
-		} else if (measurement instanceof Profile) {
-			return `${Globals.resourcePath}/icons/profile.svg`;
-		} else if (measurement instanceof Volume) {
-			return `${Globals.resourcePath}/icons/volume.svg`;
-		} else if (measurement instanceof PolygonClipVolume) {
-			return `${Globals.resourcePath}/icons/clip-polygon.svg`;
-		}
 	}
 
 	static lineToLineIntersection(P0, P1, P2, P3){

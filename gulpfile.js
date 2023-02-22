@@ -22,11 +22,6 @@ let paths = {
 		"build/workers/laslaz-worker.js",
 		"build/workers/lasdecoder-worker.js",
 	],
-	html: [
-		"src/viewer/potree.css",
-		"src/viewer/sidebar.html",
-		"src/viewer/profile.html"
-	],
 	resources: [
 		"resources/**/*"
 	]
@@ -167,8 +162,6 @@ gulp.task('build',
 	gulp.series(
 		gulp.parallel("workers", "lazylibs", "shaders", "icons_viewer", "examples_page"),
 		async function(done){
-			gulp.src(paths.html).pipe(gulp.dest('build/potree'));
-
 			gulp.src(paths.resources).pipe(gulp.dest('build/potree/resources'));
 
 			gulp.src(["LICENSE"]).pipe(gulp.dest('build/potree'));
@@ -196,8 +189,6 @@ gulp.task('watch', gulp.parallel("build", "pack", "webserver", async function() 
 	let watchlist = [
 		'src/**/*.js',
 		'src/**/**/*.js',
-		'src/**/*.css',
-		'src/**/*.html',
 		'src/**/*.vs',
 		'src/**/*.fs',
 		'resources/**/*',
